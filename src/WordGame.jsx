@@ -284,6 +284,16 @@ useEffect(() => {
           </div>
         </div>
       </div>
+	  <footer className="game-footer">
+    <a 
+        href="https://github.com/hasanshofan/Word-Finder-Game" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="github-link"
+    >
+        <i className="fab fa-github"></i> View Source Code on GitHub
+    </a>
+</footer>
     </div>
   );
 };

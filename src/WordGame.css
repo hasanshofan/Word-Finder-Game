@@ -233,5 +233,24 @@ input[type="range"] {
 @keyframes fadeIn {
     from { opacity: 0; transform: scale(1.1); }
     to { opacity: 1; transform: scale(1); }
+}
 
+.game-footer {
+    position: fixed;
+    bottom: 10px;
+    right: 20px;
+    font-size: 0.9rem;
+}
+
+.github-link {
+    color: rgb(0 0 0 / 60%);
+    text-decoration: none;
+    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.github-link:hover {
+    color: #fff; /* يضيء عند التمرير */
 }
