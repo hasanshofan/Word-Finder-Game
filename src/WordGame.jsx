@@ -2,6 +2,18 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './WordGame.css'; 
 import { s } from './dic.js';
 
+
+
+    const ranges = {
+        A: [0, 3154], B: [3154, 5969], C: [5969, 10918], D: [10918, 13767],
+        E: [13767, 15688], F: [15688, 17503], G: [17503, 19017], H: [19017, 20483],
+        I: [20483, 22683], J: [22683, 23133], K: [23133, 23532], L: [23532, 25217],
+        M: [25217, 27806], N: [27806, 28688], O: [28688, 29873], P: [29873, 34207],
+        Q: [34207, 34454], R: [34454, 36686], S: [36686, 41940], T: [41940, 44473],
+        U: [44473, 45655], V: [45655, 46155], W: [46155, 47253], X: [47253, 47286],
+        Y: [47286, 47412], Z: [47412, 47549]
+    };
+
 const WordGame = () => {
 	
 	//1. دالة توليد أحرف عشوائية بسيطة (خارج المكون أو داخله)
@@ -92,53 +104,60 @@ const startNewGame = useCallback(() => {
     }
   }, [timeLeft, finalScore, topScore, gameActive]);
 
-  // منطق التحقق من الكلمة 
+// منطق التحقق من الكلمة (محدث بالبحث الثنائي السريع)
   const checkWord = () => {
     const word = currentWord.toUpperCase();
     if (word.length <= 2) return;
+
     if (allWords.includes(word)) {
         alert('Typed before');
         resetCurrentSelection();
         return;
     }
 
-    // تحديد نطاق البحث بناءً على أول حرف 
-    const ranges = {
-        A: [0, 3154], B: [3154, 5969], C: [5969, 10918], D: [10918, 13767],
-        E: [13767, 15688], F: [15688, 17503], G: [17503, 19017], H: [19017, 20483],
-        I: [20483, 22683], J: [22683, 23133], K: [23133, 23532], L: [23532, 25217],
-        M: [25217, 27806], N: [27806, 28688], O: [28688, 29873], P: [29873, 34207],
-        Q: [34207, 34454], R: [34454, 36686], S: [36686, 41940], T: [41940, 44473],
-        U: [44473, 45655], V: [45655, 46155], W: [46155, 47253], X: [47253, 47286],
-        Y: [47286, 47412], Z: [47412, 47549]
-    };
 
     const range = ranges[word[0]];
     if (range) {
         let found = false;
-        for (let i = range[0]; i < range[1]; i++) {
-            if (s[i] === word) {
-                let pts = 1;
-                for (let z = 3; z < word.length; z++) pts++;
-                if (word.length > 5) pts *= 2;
+        
+        // --- بداية منطق البحث الثنائي بدلاً من Loop ---
+        let left = range[0];
+        let right = range[1] - 1;
 
-                setScores(prev => [...prev, pts]);
-                setAllWords(prev => [...prev, word]);
-                setFinalScore(prev => prev + pts);
+        while (left <= right) {
+            let mid = Math.floor((left + right) / 2);
+            let midWord = s[mid].toUpperCase(); // التأكد من تطابق الأحرف الكبيرة
+
+            if (midWord === word) {
                 found = true;
                 break;
             }
+
+            if (midWord < word) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
         }
-        if (!found) {
-			setIsError(true); // تفعيل الاهتزاز
-  playErrorSound();
-  
-  // إيقاف الاهتزاز بعد نصف ثانية لكي نتمكن من تكراره لاحقاً
-  setTimeout(() => {
-    setIsError(false);
-  }, 400);
-  
-  }
+        // --- نهاية منطق البحث الثنائي ---
+
+        if (found) {
+            // حساب النقاط (منطقك الأصلي)
+            let pts = 1;
+            for (let z = 3; z < word.length; z++) pts++;
+            if (word.length > 5) pts *= 2;
+
+            setScores(prev => [...prev, pts]);
+            setAllWords(prev => [...prev, word]);
+            setFinalScore(prev => prev + pts);
+        } else {
+            // منطق الخطأ (منطقك الأصلي)
+            setIsError(true);
+            playErrorSound();
+            setTimeout(() => {
+                setIsError(false);
+            }, 400);
+        }
     }
     resetCurrentSelection();
   };
