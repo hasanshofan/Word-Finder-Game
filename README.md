@@ -2,7 +2,7 @@
 
 A sophisticated word-puzzle engine showcasing **DSPC (Dual-Star Prefix Compaction)**—a custom-engineered hybrid algorithm designed to bridge the gap between **Data Compression** and **Real-time Search Efficiency**.
 
-## 💎 Why This is Portfolio-Worthy
+## 💎 Engineering Challenges & Solutions
 
 This project is not just a game; it's a solution to a real-world engineering challenge: **How to search and store massive linguistic datasets in the browser with minimal overhead.**
 
@@ -27,7 +27,6 @@ Most traditional dictionary compression methods rely on **Numerical Prefix Encod
 
 * **Single Star (`*`):** Denotes a direct prefix extension, effectively merging a parent word with its child.
 * **Double Star (`*...*`):** Represents a **Bifurcated Shared Root** (Partial Shared Root), allowing for high-density compaction of word pairs that diverge from a common base (e.g., `ABAC*K*US`).
-
 
 
 ---
