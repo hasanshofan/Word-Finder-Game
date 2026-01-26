@@ -43,7 +43,7 @@ The following table demonstrates how **DSPC** outshines both raw storage and tra
 | **Human Readable** | Yes (Transparent) | No (Obfuscated) | **Yes (Developer-Friendly)** |
 | **Parsing Cost** | Zero | High (`parseInt` + Logic) | **Ultra-Low (Native `.split`)** |
 | **Memory Overhead** | High (Quotes, Commas) | Moderate | **Ultra-Low (Packed Units)** |
-| **Compression** | 0% | ~20% | **~27.7% (Lossless)** |
+| **Compression** | 0% | ~35.45% | **~27.7% (Lossless)** |
 
 ---
 
