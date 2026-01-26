@@ -77,6 +77,9 @@ Implemented a "Divide & Conquer" strategy, reducing comparisons from **5,000+** 
 
 
 ---
+## 🚀 Roadmap: N-Root Compaction
+I am currently researching the expansion of DSPC into **N-Root Compaction**, allowing 4+ words to share a single root (e.g., `ROOT*S1*S2*S3*S4`), pushing the boundaries of browser-based dictionary compression.
+---
 
 ## 🛠 Tech Stack & Computer Science Fundamentals
 * **Advanced Algorithms:** Binary Search, String Compaction, Offset Mapping.
