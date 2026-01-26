@@ -3,22 +3,11 @@ import './WordGame.css';
 import { s } from './dic.js';
 
 
-/*version 2 - main idea compressing the Dictionary*/
-/*
-old ranges للقاموس العادي غير المختصر
-const ranges = {
-  A: [0, 3154], B: [3154, 5969], C: [5969, 10918], D: [10918, 13767],
-  E: [13767, 15688], F: [15688, 17503], G: [17503, 19017], H: [19017, 20483],
-  I: [20483, 22683], J: [22683, 23133], K: [23133, 23532], L: [23532, 25217],
-  M: [25217, 27806], N: [27806, 28688], O: [28688, 29873], P: [29873, 34207],
-  Q: [34207, 34454], R: [34454, 36686], S: [36686, 41940], T: [41940, 44473],
-  U: [44473, 45655], V: [45655, 46155], W: [46155, 47253], X: [47253, 47286],
-  Y: [47286, 47412], Z: [47412, 47549]
-};
-*/
+/*version 3 - main idea compressing the Dictionary ADAPTIVE WAY*/
+
 
 const ranges = {
-A:[0,1577], B:[1577,2985], C:[2985,5460], D:[5460,6885], E:[6885,7846], F:[7846,8754], G:[8754,9511], H:[9511,10244], I:[10244,11344], J:[11344,11569], K:[11569,11769], L:[11769,12612], M:[12612,13907], N:[13907,14348], O:[14348,14940], P:[14940,17107], Q:[17107,17230], R:[17230,18346], S:[18346,20973], T:[20973,22240], U:[22240,22831], V:[22831,23081], W:[23081,23630], X:[23630,23647], Y:[23647,23710], Z:[23710,23780]
+A:[0,649],B:[649,1153],C:[1153,2080],D:[2080,2654],E:[2654,3104],F:[3104,3461],G:[3461,3749],H:[3749,4027],I:[4027,4526],J:[4526,4626],K:[4626,4701],L:[4701,5028],M:[5028,5536],N:[5536,5720],O:[5720,5964],P:[5964,6843],Q:[6843,6887],R:[6887,7318],S:[7318,8304],T:[8304,8785],U:[8785,9030],V:[9030,9140],W:[9140,9344],X:[9344,9352],Y:[9352,9377],Z:[9377,9404]
 };
 
 const WordGame = () => {
@@ -152,57 +141,66 @@ const startNewGame = useCallback(() => {
       // --- نهاية منطق البحث الثنائي ---
 
 */
-// --- بداية منطق البحث الثنائي المطور لنظام النجوم ---
+// --- بداية منطق البحث الثنائي المطور لنظام العناقيد (ACR Decoder) ---
 let left = range[0];
 let right = range[1] - 1;
-
-let attempts = 0; // عداد عمليات البحث
-
+let attempts = 0; 
 
 while (left <= right) {
-	
-	attempts++; // زيادة العداد في كل دورة
-	
-  let mid = Math.floor((left + right) / 2);
-  let entry = s[mid]; // الكلمة أو الزوج من القاموس
-  
-  let firstWord = "";
-  let secondWord = "";
+    attempts++; 
+    let mid = Math.floor((left + right) / 2);
+    let entry = s[mid]; 
 
-  // 1. تحليل العنصر (تفكيك النجوم)
-  const stars = entry.split('*');
-  
-  if (stars.length === 1) {
-    // حالة كلمة مفردة
-    firstWord = entry;
-    secondWord = entry; // لتسهيل منطق المقارنة بالأسفل
-  } else if (stars.length === 2) {
-    // حالة نجمة واحدة (ABA*CA)
-    firstWord = stars[0];
-    secondWord = stars[0] + stars[1];
-  } else {
-    // حالة نجمتين (ABAC*K*US)
-    firstWord = stars[0] + stars[1];
-    secondWord = stars[0] + stars[2];
-  }
+    // 1. تفكيك العنقود (Cluster Decoding)
+    let clusterWords = [];
+    
+    // فحص نوع الرابط (جذر مستقل ~ أم مجرد بادئة *)
+    if (!entry.includes('*') && !entry.includes('~')) {
+        // حالة كلمة مفردة لم يتم ضغطها
+        clusterWords.push(entry);
+    } else {
+        let root = "";
+        let suffixes = [];
+        
+        if (entry.includes('~')) {
+            // الجذر هو كلمة مستقلة (ABA~CA*CK)
+            const parts = entry.split('~');
+            root = parts[0];
+            clusterWords.push(root); // إضافة الجذر كأول كلمة
+            suffixes = parts[1].split('*');
+        } else {
+            // الجذر مجرد بادئة (ABA*CA*CK)
+            const parts = entry.split('*');
+            root = parts[0];
+            suffixes = parts.slice(1);
+        }
 
-  // 2. التحقق من المطابقة
-  if (word === firstWord || word === secondWord) {
-    found = true;
-    break;
-  }
+        // بناء الكلمات المشتقة من السوابق
+        for (let i = 0; i < suffixes.length; i++) {
+            if (suffixes[i] !== "") { // تجنب السوفيكس الفارغ
+                clusterWords.push(root + suffixes[i]);
+            }
+        }
+    }
 
-  // 3. تحديد اتجاه البحث (بناءً على الكلمة الثانية لأنها الأكبر أبجدياً)
-  if (secondWord < word) {
-    left = mid + 1;
-  } else {
-    right = mid - 1;
-  }
+    // 2. التحقق من المطابقة (داخل العنقود)
+    // نستخدم find للتحقق ما إذا كانت الكلمة المطلوبة (word) موجودة في العنقود الحالي
+    if (clusterWords.includes(word)) {
+        found = true;
+        break;
+    }
+
+    // 3. تحديد اتجاه البحث (بناءً على آخر كلمة في العنقود لأنها الأكبر أبجدياً)
+    let lastWordInCluster = clusterWords[clusterWords.length - 1];
+    if (lastWordInCluster < word) {
+        left = mid + 1;
+    } else {
+        right = mid - 1;
+    }
 }
-// إظهار النتيجة استقصائياً
-console.log(`الكلمة: ${word} | عدد العمليات: ${attempts}`);
 
-// --- نهاية منطق البحث الثنائي ---
+console.log(`الكلمة: ${word} | الحالة: ${found ? 'تم العثور عليها' : 'غير موجودة'} | عدد العمليات: ${attempts}`);
+// --- نهاية منطق البحث الثنائي المطور ---
 
 
 
