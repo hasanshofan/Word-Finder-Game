@@ -111,7 +111,7 @@ The transition to ACR Logic (V3) marks a significant leap in both storage and ru
 
 | Metric | Numerical Encoding (Legacy) | Star-Pairing (V2) | **ACR Cluster Logic (V3)** |
 | :--- | :--- | :--- | :--- |
-| **Dictionary Size** | 335 KB | 315 KB | **284 KB (Final Winner)** |
+| **Dictionary Size** | 335 KB | 375 KB | **284 KB (Final Winner)** |
 | **Decoding Philosophy** | Arithmetic/Positional | Symbolic/Static | **Adaptive Contextual Hybrid** |
 | **Initial Latency (Cold Start)** | High (Decoding ~5k words) | Medium | **Near-Zero (Lazy Decoding)** |
 | **CPU Operations/Search** | ~5,012 ops per letter | ~150 ops | **~100–120 ops (Peak Efficiency)** |
